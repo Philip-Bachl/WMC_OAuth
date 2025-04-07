@@ -1,3 +1,9 @@
+# Database
+*.db
+
+# Bun
+*.lockb
+
 # Logs
 logs
 *.log
