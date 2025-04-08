@@ -1,39 +1,27 @@
-import { schemaScript } from '$lib/db/schema';
-import type { Handle } from '@sveltejs/kit';
-import sqlite3 from "sqlite3";
+import { createDbClient } from '$lib/db/db';
+import { createSupabaseClient } from '$lib/db/supabase';
+import { redirect, type Handle } from '@sveltejs/kit';
 
-const CONNECTION_STRING = "db.db";
+const protectedRoutes = ["/api", "/admin"];
 
 export const handle: Handle = async ({ event, resolve }) => {
-    if (!event.locals.db) {
-        // This will create the database within the `db.sqlite` file.
-        const db = new sqlite3.Database(CONNECTION_STRING, (err) => {
-            if(err) {
-                //FIXME
-                throw err;
-            }
-        });
-        
-        const schemaScriptPromise = new Promise((resolve, reject) => {
-            // Schema Creation
-            db.run(schemaScript, (err) => {
-                if(err) {
-                    //FIXME
-                    reject(err);
-                    console.error("schema script failed.");
-                    return;
-                }
 
-                resolve(null);
-            });
-        });
+    if (event.url.pathname == "/" || protectedRoutes.some(route => event.url.pathname.startsWith(route))) {
+        const superbase = createSupabaseClient();
+        const { data: { user } } = await superbase.auth.getUser();
+        if (!user) {
+            redirect(307, "/login");
+        }
+        const { data } = await superbase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
+        event.locals.userAndRole = { user: user, role: data?.role ?? "" };
 
-        await schemaScriptPromise;
-
-        // Set the db as our events.db variable.
-        event.locals.db = db;
+        event.locals.db = createDbClient();
     }
-    
+
     const response = await resolve(event);
     return response;
 };
