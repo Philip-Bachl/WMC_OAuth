@@ -8,15 +8,17 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (!event.locals.db) {
         // This will create the database within the `db.sqlite` file.
         const db = new sqlite3.Database(CONNECTION_STRING, (err) => {
-        if(err) {
-            throw err;
-        }
+            if(err) {
+                //FIXME
+                throw err;
+            }
         });
         
         const schemaScriptPromise = new Promise((resolve, reject) => {
             // Schema Creation
             db.run(schemaScript, (err) => {
                 if(err) {
+                    //FIXME
                     reject(err);
                     console.error("schema script failed.");
                     return;
