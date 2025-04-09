@@ -12,8 +12,8 @@
 
     const dirtyProducts: Product[] = [];
 
-    async function sendFetch(url: string, method: string, body: string) {
-        await fetch(url, {
+    async function sendFetch(method: string, body: string) {
+        await fetch("/private/api", {
             method: method,
             body: body,
             headers: {
@@ -24,17 +24,35 @@
     }
 
     function markDirty(index: number) {
-        if (!dirtyProducts.includes(products[index])) {
-            dirtyProducts.push(products[index]);
+        const productElement = document.querySelectorAll(".product")[index];
+        const dirtyId: HTMLSpanElement | null =
+            productElement.querySelector(".id");
+        const dirtyName: HTMLInputElement | null =
+            productElement.querySelector(".name");
+        const dirtyPrice: HTMLInputElement | null =
+            productElement.querySelector(".price");
+        const dirtyStock: HTMLInputElement | null =
+            productElement.querySelector(".stock");
+
+        const parsedDirtyId = dirtyId?.innerText ?? "";
+
+        const dirtyProduct = {
+            id: dirtyId?.innerText ?? "",
+            name: dirtyName?.value ?? "",
+            price: parseInt(dirtyPrice?.value ?? "-1", 10),
+            stock: parseInt(dirtyStock?.value ?? "-1", 10),
+        };
+
+        noDupe: {
+            for (let i = 0; i < dirtyProducts.length; i++) {
+                if (dirtyProducts[i].id == dirtyProduct.id) {
+                    dirtyProducts[i] = dirtyProduct;
+                    break noDupe;
+                }
+            }
+
+            dirtyProducts.push(dirtyProduct);
         }
-    }
-
-    function updateDirtyProducts() {
-        sendFetch("/", "PUT", JSON.stringify(dirtyProducts));
-    }
-
-    function deleteProduct(product: Product) {
-        sendFetch("/", "DELETE", JSON.stringify({ id: product.id }));
     }
 
     let id: string = $state("");
@@ -42,7 +60,7 @@
     let price: number = $state(0);
     let stock: number = $state(0);
 
-    function createProduct() {
+    async function createProduct() {
         //TODO input validation
         const product: Product = {
             id: id,
@@ -50,7 +68,19 @@
             price: price,
             stock: stock,
         };
-        sendFetch("/", "POST", JSON.stringify(product));
+        await sendFetch("POST", JSON.stringify(product));
+        location.reload();
+    }
+
+    async function updateDirtyProducts() {
+        console.log("dirty products:", dirtyProducts);
+        await sendFetch("PUT", JSON.stringify(dirtyProducts));
+        location.reload();
+    }
+
+    async function deleteProduct(product: Product) {
+        await sendFetch("DELETE", JSON.stringify({ id: product.id }));
+        location.reload();
     }
 </script>
 
@@ -58,11 +88,14 @@
     {#each productsAndIndecies as productAndIndex}
         <div class="product">
             {#if role == "admin"}
-                <h1>ID: {productAndIndex.product.id}</h1>
+                <h1>
+                    ID: <span class="id">{productAndIndex.product.id}</span>
+                </h1>
                 <p>
                     Name: <input
                         type="text"
                         name="name"
+                        class="name"
                         value={productAndIndex.product.name}
                         oninput={() => markDirty(productAndIndex.index)}
                     />
@@ -71,6 +104,7 @@
                     Price: <input
                         type="number"
                         name="price"
+                        class="price"
                         min="0"
                         step="0.01"
                         value={productAndIndex.product.price}
@@ -81,6 +115,7 @@
                     Stock: <input
                         type="number"
                         name="stock"
+                        class="stock"
                         min="0"
                         value={productAndIndex.product.stock}
                         oninput={() => markDirty(productAndIndex.index)}
@@ -115,7 +150,13 @@
             />
         </h1>
         <p>
-            Name: <input type="text" name="name" id="name" placeholder="Name" />
+            Name: <input
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Name"
+                bind:value={name}
+            />
         </p>
         <p>
             Price: <input
@@ -125,6 +166,7 @@
                 min="0"
                 step="0.01"
                 placeholder="Price"
+                bind:value={price}
             />€
         </p>
         <p>
@@ -134,6 +176,7 @@
                 id="stock"
                 min="0"
                 placeholder="Stock"
+                bind:value={stock}
             /> left
         </p>
         <button type="button" onclick={() => createProduct()}>Create</button>
