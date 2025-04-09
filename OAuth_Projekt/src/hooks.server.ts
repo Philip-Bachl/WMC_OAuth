@@ -24,7 +24,7 @@ export const handle: Handle = async ({ event, resolve }) => {
             .select("role")
             .eq("id", user.id)
             .single();
-        event.locals.userAndRole = { user: user, role: data?.role ?? "" }; //TODO maybe change default value
+        event.locals.userAndRole = { user: user, role: data?.role ?? "user" };
 
         event.locals.db = createDbClient();
     }
