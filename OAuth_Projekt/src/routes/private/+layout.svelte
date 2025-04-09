@@ -3,7 +3,7 @@
     let { supabase } = $derived(data);
 
     const logout = async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabase.auth.signOut(); // TODO redirect
         if (error) {
             console.error(error);
         }
