@@ -1,24 +1,2 @@
-import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { createServerClient } from "@supabase/ssr";
-import type { Cookies } from "@sveltejs/kit";
-
-export const PUBLIC_SUPABASE_URL = "TODO";
-export const PUBLIC_SUPABASE_ANON_KEY = "TODO";
-
-export function createSupabaseClient(): SupabaseClient {
-    return createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
-}
-
-export function createSupabaseServerClient(cookies: Cookies) {
-    return createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-        cookies: {
-            getAll() {
-                return cookies.getAll()
-            },
-            setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) => cookies.set(name, value, { ...options, path: '/' }));
-            },
-        },
-    });
-}
+export const PUBLIC_SUPABASE_URL = "https://qunzgoojcvxpvcrebnib.supabase.co";
+export const PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1bnpnb29qY3Z4cHZjcmVibmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM4NzAyOTcsImV4cCI6MjA1OTQ0NjI5N30.iv3E9inGzDQMzAM-Hca7rofgZNNMAKRCqlJefxjk4g4";

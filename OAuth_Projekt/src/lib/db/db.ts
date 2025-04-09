@@ -4,7 +4,7 @@ import { schemaScript } from "./schema";
 
 const CONNECTION_STRING = "db.db";
 
-export function createDbClient(): Database {
+export function createSqliteDbClient(): Database {
     const db = new sqlite3.Database(CONNECTION_STRING, (err) => {
         if (err) {
             //TODO
