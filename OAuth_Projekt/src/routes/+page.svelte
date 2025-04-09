@@ -31,11 +31,11 @@
     }
 
     function updateDirtyProducts() {
-        sendFetch("/", "PUT", JSON.stringify(dirtyProducts)); //TODO API ENDPOINT
+        sendFetch("/", "PUT", JSON.stringify(dirtyProducts));
     }
 
     function deleteProduct(product: Product) {
-        sendFetch("/", "DELETE", JSON.stringify(product)); //TODO API ENDPOINT
+        sendFetch("/", "DELETE", JSON.stringify({id: product.id}));
     }
 
     let id: string = $state("");

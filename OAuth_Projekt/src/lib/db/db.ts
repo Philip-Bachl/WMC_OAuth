@@ -12,7 +12,7 @@ export function createDbClient(): Database {
     });
 
     //Schema Creation
-    db.run(schemaScript);
+    db.exec(schemaScript);
 
     return db;
 }
