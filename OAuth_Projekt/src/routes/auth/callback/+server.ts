@@ -11,7 +11,7 @@ export async function GET(event) {
     console.log(next);
 
     if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (!error) {
             throw redirect(303, `/${next.slice(1)}`);
         }

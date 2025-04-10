@@ -1,9 +1,9 @@
 import type { Product } from '$lib/db/product';
 import { json } from '@sveltejs/kit';
 
-export async function POST({ request, locals: { sqliteDb } }): Promise<Response> {
-    //TODO Input validation
+export async function POST({ request, locals: { sqliteDb, role } }): Promise<Response> {
     const product: Product = await request.json();
+    if (role != "admin") return json({ product }, { status: 401 }); // Unauthorized
 
     console.log(product);
 
@@ -12,9 +12,9 @@ export async function POST({ request, locals: { sqliteDb } }): Promise<Response>
     return json({ product }, { status: 201, }); // CREATED
 }
 
-export async function PUT({ request, locals: { sqliteDb } }): Promise<Response> {
-    //TODO Input validation
+export async function PUT({ request, locals: { sqliteDb, role } }): Promise<Response> {
     const products: Product[] = await request.json();
+    if (role != "admin") return json({ products }, { status: 401 }); // Unauthorized
 
     console.log(products);
 
@@ -27,9 +27,9 @@ export async function PUT({ request, locals: { sqliteDb } }): Promise<Response> 
     return json({ length: products.length }, { status: 200, }); // OK
 }
 
-export async function DELETE({ request, locals: { sqliteDb } }): Promise<Response> {
-    //TODO Input validation
+export async function DELETE({ request, locals: { sqliteDb, role } }): Promise<Response> {
     const { id } = await request.json();
+    if (role != "admin") return json({ id }, { status: 401 }); // Unauthorized
 
     sqliteDb.exec(`DELETE FROM Product WHERE id = '${id}'`);
 
