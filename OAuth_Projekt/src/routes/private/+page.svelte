@@ -84,101 +84,133 @@
     }
 </script>
 
-<div id="products">
-    {#each productsAndIndecies as productAndIndex}
-        <div class="product">
-            {#if role == "admin"}
+<div class="container">
+    <div id="products">
+        {#each productsAndIndecies as productAndIndex}
+            <div class="product">
+                {#if role == "admin"}
+                    <h1>
+                        ID: <span class="id">{productAndIndex.product.id}</span>
+                    </h1>
+                    <p>
+                        Name: <input
+                            type="text"
+                            name="name"
+                            class="name"
+                            value={productAndIndex.product.name}
+                            oninput={() => markDirty(productAndIndex.index)}
+                        />
+                    </p>
+                    <p>
+                        Price: <input
+                            type="number"
+                            name="price"
+                            class="price"
+                            min="0"
+                            step="0.01"
+                            value={productAndIndex.product.price}
+                            oninput={() => markDirty(productAndIndex.index)}
+                        />€
+                    </p>
+                    <p>
+                        Stock: <input
+                            type="number"
+                            name="stock"
+                            class="stock"
+                            min="0"
+                            value={productAndIndex.product.stock}
+                            oninput={() => markDirty(productAndIndex.index)}
+                        /> left
+                    </p>
+                    <button
+                        type="button"
+                        onclick={() => deleteProduct(productAndIndex.product)}
+                        >Delete</button
+                    >
+                {:else}
+                    <h1>ID: {productAndIndex.product.id}</h1>
+                    <p>{productAndIndex.product.name}</p>
+                    <p>Price: {productAndIndex.product.price}€</p>
+                    <p>Stock: {productAndIndex.product.stock} left</p>
+                {/if}
+            </div>
+        {/each}
+    </div>
+
+    {#if role == "admin"}
+        <button type="button" onclick={() => updateDirtyProducts()}
+            >Update</button
+        >
+        <hr />
+        <div class="create">
+            <div id="createProduct">
                 <h1>
-                    ID: <span class="id">{productAndIndex.product.id}</span>
+                    ID: <input
+                        type="text"
+                        name="id"
+                        id="id"
+                        placeholder="ID"
+                        bind:value={id}
+                    />
                 </h1>
                 <p>
                     Name: <input
                         type="text"
                         name="name"
-                        class="name"
-                        value={productAndIndex.product.name}
-                        oninput={() => markDirty(productAndIndex.index)}
+                        id="name"
+                        placeholder="Name"
+                        bind:value={name}
                     />
                 </p>
                 <p>
                     Price: <input
                         type="number"
                         name="price"
-                        class="price"
+                        id="price"
                         min="0"
                         step="0.01"
-                        value={productAndIndex.product.price}
-                        oninput={() => markDirty(productAndIndex.index)}
+                        placeholder="Price"
+                        bind:value={price}
                     />€
                 </p>
                 <p>
                     Stock: <input
                         type="number"
                         name="stock"
-                        class="stock"
+                        id="stock"
                         min="0"
-                        value={productAndIndex.product.stock}
-                        oninput={() => markDirty(productAndIndex.index)}
+                        placeholder="Stock"
+                        bind:value={stock}
                     /> left
                 </p>
-                <button
-                    type="button"
-                    onclick={() => deleteProduct(productAndIndex.product)}
-                    >Delete</button
+                <button type="button" onclick={() => createProduct()}
+                    >Create</button
                 >
-            {:else}
-                <h1>ID: {productAndIndex.product.id}</h1>
-                <p>{productAndIndex.product.name}</p>
-                <p>Price: {productAndIndex.product.price}€</p>
-                <p>Stock: {productAndIndex.product.stock} left</p>
-            {/if}
+            </div>
         </div>
-    {/each}
+    {/if}
 </div>
 
-{#if role == "admin"}
-    <button type="button" onclick={() => updateDirtyProducts()}>Submit</button>
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-    <div id="createProduct">
-        <h1>
-            ID: <input
-                type="text"
-                name="id"
-                id="id"
-                placeholder="ID"
-                bind:value={id}
-            />
-        </h1>
-        <p>
-            Name: <input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Name"
-                bind:value={name}
-            />
-        </p>
-        <p>
-            Price: <input
-                type="number"
-                name="price"
-                id="price"
-                min="0"
-                step="0.01"
-                placeholder="Price"
-                bind:value={price}
-            />€
-        </p>
-        <p>
-            Stock: <input
-                type="number"
-                name="stock"
-                id="stock"
-                min="0"
-                placeholder="Stock"
-                bind:value={stock}
-            /> left
-        </p>
-        <button type="button" onclick={() => createProduct()}>Create</button>
-    </div>
-{/if}
+    hr {
+        width: 100%;
+    }
+
+    button {
+        width: fit-content;
+    }
+
+    .product,
+    .create {
+        border: 2px solid black;
+        border-radius: 10px;
+        width: fit-content;
+        padding: 20px;
+    }
+</style>

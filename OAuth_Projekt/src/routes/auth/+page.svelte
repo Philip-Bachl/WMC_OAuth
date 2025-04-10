@@ -10,3 +10,20 @@
     <button>Login</button>
     <button formaction="?/signup">Sign up</button>
 </form>
+
+<style>
+    input,
+    label {
+        margin-bottom: 20px;
+
+        font-size: 1em;
+        font-family: Arial, Helvetica, sans-serif;
+        text-decoration: none;
+
+        position: relative;
+
+        background-color: transparent;
+        color: black;
+        cursor: pointer;
+    }
+</style>
